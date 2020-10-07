@@ -10,6 +10,8 @@ module SnFoil
     class_option :path, desc: 'Base path for file', type: :string, default: 'app/controllers'
 
     def add_app_file
+      raise "Argument[0] \':model\' was not provided" unless model
+
       template(template_name, "#{options[:path]}/#{file_name}_controller.rb")
     end
 

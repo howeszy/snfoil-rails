@@ -9,6 +9,8 @@ module SnFoil
     class_option :path, desc: 'Base path for file', type: :string, default: 'app/searchers'
 
     def add_app_file
+      raise "Argument[0] \':model\' was not provided" unless model
+
       file_name = if modules.length.zero?
                     name
                   else

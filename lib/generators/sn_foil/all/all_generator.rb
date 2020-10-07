@@ -10,6 +10,8 @@ module SnFoil
     class_option :skip_model, desc: 'Skip Model Creation', type: :boolean, default: false
 
     def add_model
+      raise "Argument[0] \':model\' was not provided" unless model
+
       generate('model', *call_args, **call_options) unless File.file?("app/models/#{model.singularize.underscore}.rb") || options[:skip_model]
     end
 

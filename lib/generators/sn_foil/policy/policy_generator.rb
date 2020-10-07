@@ -1,37 +1,41 @@
-class SnFoil::PolicyGenerator < Rails::Generators::Base
-  source_root File.expand_path('templates', __dir__)
+# frozen_string_literal: true
 
-  argument :model, type: :string
+module SnFoil
+  class PolicyGenerator < Rails::Generators::Base
+    source_root File.expand_path('templates', __dir__)
 
-  class_option :path, desc: "Base path for file", type: :string, default: 'app/policies'
+    argument :model, type: :string
 
-  def add_app_file
-    file_name = if modules.length.zero?
-                  name
-                else
-                  modules.join('/') + '/' + name
-                end
+    class_option :path, desc: 'Base path for file', type: :string, default: 'app/policies'
 
-    template('policy.erb', "#{options[:path]}/#{file_name}_policy.rb")
-  end
+    def add_app_file
+      file_name = if modules.length.zero?
+                    name
+                  else
+                    modules.join('/') + '/' + name
+                  end
 
-  private
+      template('policy.erb', "#{options[:path]}/#{file_name}_policy.rb")
+    end
 
-  def name
-    @name ||= model.split('/').last.underscore.singularize
-  end
+    private
 
-  def class_name
-    @class_name ||= name.camelize
-  end
+    def name
+      @name ||= model.split('/').last.underscore.singularize
+    end
 
-  def modules
-    @modules ||= model.split('/')[0..-2].map(&:underscore)
-  end
+    def class_name
+      @class_name ||= name.camelize
+    end
 
-  def class_modules
-    return if modules.length.zero?
+    def modules
+      @modules ||= model.split('/')[0..-2].map(&:underscore)
+    end
 
-    @class_modules ||= "#{modules.map(&:camelize).join('::')}::"
+    def class_modules
+      return if modules.length.zero?
+
+      @class_modules ||= "#{modules.map(&:camelize).join('::')}::"
+    end
   end
 end

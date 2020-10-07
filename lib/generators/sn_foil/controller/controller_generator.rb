@@ -1,44 +1,52 @@
-class SnFoil::ControllerGenerator < Rails::Generators::Base
-  source_root File.expand_path('templates', __dir__)
+# frozen_string_literal: true
 
-  argument :model, type: :string
+module SnFoil
+  class ControllerGenerator < Rails::Generators::Base
+    source_root File.expand_path('templates', __dir__)
 
-  class_option :type, desc: "Generate Base or API", type: :string, default: 'base'
-  class_option :path, desc: "Base path for file", type: :string, default: 'app/controllers'
+    argument :model, type: :string
 
-  def add_app_file
-    file_name = if modules.length.zero?
-                  name
-                else
-                  modules.join('/') + '/' + name
-                end
+    class_option :type, desc: 'Generate Base or API', type: :string, default: 'base'
+    class_option :path, desc: 'Base path for file', type: :string, default: 'app/controllers'
 
-    template_name = if options[:type] == 'api'
-                      'api_controller.erb'
-                    else
-                      'controller.erb'
-                    end
+    def add_app_file
+      template(template_name, "#{options[:path]}/#{file_name}_controller.rb")
+    end
 
-    template(template_name, "#{options[:path]}/#{file_name}_controller.rb")
-  end
+    private
 
-  private
+    def file_name
+      @file_name ||= if modules.length.zero?
+                       name
+                     else
+                       modules.join('/') + '/' + name
+                     end
+    end
 
-  def name
-    @name ||= model.split('/').last.underscore.pluralize
-  end
+    def template_name
+      @template_name ||= if options[:type] == 'api'
+                           'api_controller.erb'
+                         else
+                           'controller.erb'
+                         end
+    end
 
-  def class_name
-    @class_name ||= name.camelize
-  end
+    def name
+      @name ||= model.split('/').last.underscore.pluralize
+    end
 
-  def modules
-    @modules ||= model.split('/')[0..-2].map(&:underscore)
-  end
+    def class_name
+      @class_name ||= name.camelize
+    end
 
-  def class_modules
-    return if modules.length.zero?
+    def modules
+      @modules ||= model.split('/')[0..-2].map(&:underscore)
+    end
 
-    @class_modules ||= "#{modules.map(&:camelize).join('::')}::"
+    def class_modules
+      return if modules.length.zero?
+
+      @class_modules ||= "#{modules.map(&:camelize).join('::')}::"
+    end
   end
 end

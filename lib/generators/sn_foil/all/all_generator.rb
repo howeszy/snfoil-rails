@@ -1,46 +1,50 @@
-class SnFoil::AllGenerator < Rails::Generators::Base
-  source_root File.expand_path('templates', __dir__)
+# frozen_string_literal: true
 
-  argument :model, type: :string
+module SnFoil
+  class AllGenerator < Rails::Generators::Base
+    source_root File.expand_path('templates', __dir__)
 
-  class_option :type, desc: "Generate Base or API", type: :string, default: 'base'
-  class_option :skip_model, desc: "Skip Model Creation", type: :boolean, default: false
+    argument :model, type: :string
 
-  def add_model
-    generate('model', *call_args, **call_options) unless File.file?("app/models/#{model.singularize.underscore}.rb") || options[:skip_model]
-  end
+    class_option :type, desc: 'Generate Base or API', type: :string, default: 'base'
+    class_option :skip_model, desc: 'Skip Model Creation', type: :boolean, default: false
 
-  def add_policy
-    generate('sn_foil:policy', *call_args, **call_options)
-  end
+    def add_model
+      generate('model', *call_args, **call_options) unless File.file?("app/models/#{model.singularize.underscore}.rb") || options[:skip_model]
+    end
 
-  def add_searcher
-    generate('sn_foil:searcher', *call_args, **call_options)
-  end
+    def add_policy
+      generate('sn_foil:policy', *call_args, **call_options)
+    end
 
-  def add_context
-    generate('sn_foil:context', *call_args, **call_options)
-  end
+    def add_searcher
+      generate('sn_foil:searcher', *call_args, **call_options)
+    end
 
-  def add_jsonapi_serializer
-    generate('sn_foil:jsonapi_serializer', *call_args, **call_options)
-  end
+    def add_context
+      generate('sn_foil:context', *call_args, **call_options)
+    end
 
-  def add_jsonapi_deserializer
-    generate('sn_foil:jsonapi_deserializer', *call_args, **call_options)
-  end
+    def add_jsonapi_serializer
+      generate('sn_foil:jsonapi_serializer', *call_args, **call_options)
+    end
 
-  def add_controller
-    generate('sn_foil:controller', *call_args, **call_options)
-  end
+    def add_jsonapi_deserializer
+      generate('sn_foil:jsonapi_deserializer', *call_args, **call_options)
+    end
 
-  private
+    def add_controller
+      generate('sn_foil:controller', *call_args, **call_options)
+    end
 
-  def call_args
-    @call_args ||= [model].concat(args)
-  end
+    private
 
-  def call_options
-    @call_options ||= options.deep_symbolize_keys
+    def call_args
+      @call_args ||= [model].concat(args)
+    end
+
+    def call_options
+      @call_options ||= options.deep_symbolize_keys
+    end
   end
 end
